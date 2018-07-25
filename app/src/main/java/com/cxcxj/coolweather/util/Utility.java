@@ -143,7 +143,6 @@ public class Utility {
 
         try {
 
-            Log.d(TAG, "handleWeatherResponse: "+response);
             //解析天气数据主题内容
             JSONObject jsonObject=new JSONObject(response);
             JSONArray jsonArray=jsonObject.getJSONArray("HeWeather");
