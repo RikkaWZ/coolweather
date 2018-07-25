@@ -6,7 +6,7 @@ public class Basic {
 
     /*@SerializedName()注解用于让JSON字段与Java字段之间建立映射关系*/
 
-    @SerializedName("city")
+    @SerializedName("location")
     public String cityName;
 
     @SerializedName("id")
