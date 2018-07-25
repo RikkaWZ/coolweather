@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.cxcxj.coolweather.db.City;
 import com.cxcxj.coolweather.db.County;
 import com.cxcxj.coolweather.db.Province;
+import com.cxcxj.coolweather.gson.Weather;
 import com.cxcxj.coolweather.util.HttpUtil;
 import com.cxcxj.coolweather.util.Utility;
 
@@ -101,12 +102,27 @@ public class ChooseAreaFragment extends Fragment {
                 } else if (currentLevel == LEVEL_CITY) {
                     selectedCity = cityList.get(i);
                     queryCounties();
-                }else if (currentLevel==LEVEL_COUNTY){
-                    String weatherId=countyList.get(i).getWeatherId();
-                    Intent intent=new Intent(getActivity(),WeatherActivity.class);
-                    intent.putExtra("weather_id",weatherId);
-                    startActivity(intent);
-                    getActivity().finish();
+                } else if (currentLevel == LEVEL_COUNTY) {
+
+                    //获取id
+                    String weatherId = countyList.get(i).getWeatherId();
+
+                    //若在主界面
+                    if (getActivity() instanceof MainActivity) {
+                        Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                        intent.putExtra("weather_id", weatherId);
+                        startActivity(intent);
+                        getActivity().finish();
+                    }
+
+                    //若在副界面
+                    else if (getActivity() instanceof WeatherActivity) {
+                        WeatherActivity activity = (WeatherActivity) getActivity();
+                        activity.drawerLayout.closeDrawers();
+                        activity.swipeRefresh.setRefreshing(true);
+                        activity.requestWeather(weatherId);
+                    }
+
                 }
 
             }
@@ -130,7 +146,6 @@ public class ChooseAreaFragment extends Fragment {
         queryProvinces();
 
     }
-
 
 
     /**
@@ -266,7 +281,7 @@ public class ChooseAreaFragment extends Fragment {
 
                 if ("province".equals(type)) {
                     result = Utility.handleProvinceResponse(responseText);
-                    
+
                 } else if ("city".equals(type)) {
                     result = Utility.handleCityResponse(responseText, selectedProvince.getId());
                 } else if ("county".equals(type)) {
